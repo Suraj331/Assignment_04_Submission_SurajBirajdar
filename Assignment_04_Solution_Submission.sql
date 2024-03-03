@@ -159,6 +159,38 @@ from actorCount;
 
 -- Recursive CTE --
 -- Q2. Use recursive cte to generate a hierachical list of catagories and their subcatagories from the catagory table
+WITH RECURSIVE CategoryHierarchy AS (
+    SELECT 
+        category_id,
+        name AS category_name,
+        NULL AS parent_category_id,
+        0 AS level
+    FROM 
+        category
+    WHERE 
+        parent_category_id IS NULL
+    
+    UNION ALL
+    
+    SELECT 
+        c.category_id,
+        c.name AS category_name,
+        ch.category_id AS parent_category_id,
+        ch.level + 1 AS level
+    FROM 
+        category c
+    JOIN 
+        CategoryHierarchy ch ON c.parent_category_id = ch.category_id
+)
+SELECT 
+    category_id,
+    category_name,
+    parent_category_id,
+    level
+FROM 
+    CategoryHierarchy
+ORDER BY 
+    level, category_id;
 
 
 
